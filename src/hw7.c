@@ -12,15 +12,44 @@ void free_bst_sf(bst_sf *root) {
 }
 
 matrix_sf* add_mats_sf(const matrix_sf *mat1, const matrix_sf *mat2) {
-    return NULL;
+    matrix_sf *sum = malloc(sizeof(matrix_sf) + mat1->num_rows * mat2->num_cols * sizeof(int));
+    sum->name = '?';
+    sum->num_rows = mat1->num_rows;
+    sum->num_cols = mat1->num_cols;
+    for (int i = 0; i < (mat1->num_rows * mat2->num_cols); i++) {
+        sum->values[i] = mat1->values[i] + mat2->values[i];
+    }
+    return sum;
 }
 
 matrix_sf* mult_mats_sf(const matrix_sf *mat1, const matrix_sf *mat2) {
-   return NULL;
+    matrix_sf *product = malloc(sizeof(matrix_sf) + mat1->num_rows * mat2->num_cols * sizeof(int));
+    product->name = '?';
+    product->num_rows = mat1->num_rows;
+    product->num_cols = mat2->num_cols;
+    for (int i = 0; i < mat1->num_rows; i++) {
+        for (int j = 0; j < mat2->num_cols; j++) {
+            int sum = 0;
+            for (int k = 0; k < mat1->num_cols) {
+                sum += mat1->values[i * mat1->num_cols + k] * mat2->values[k * mat2->num_cols + j];
+            }
+            product->values[i * mat2->num_cols + j] = sum;
+        }
+    }
+    return product;
 }
 
 matrix_sf* transpose_mat_sf(const matrix_sf *mat) {
-    return NULL;
+    matrix_sf *transposed = malloc(sizeof(matrix_sf) + mat->num_cols * mat->num_rows * sizeof(int));
+    transposed->name = '?';
+    transposed->num_rows = mat->num_cols;
+    transposed->num_cols = mat->num_rows;
+    for (int i = 0; i < mat->num_rows; i++) {
+        for (int j = 0; j < mat->num_cols; j++) {
+            transposed->values[j * mat->num_rows + i] = mat->values[i * mat->num_cols + j];
+        }
+    }
+    return transposed;
 }
 
 matrix_sf* create_matrix_sf(char name, const char *expr) {
@@ -36,7 +65,7 @@ matrix_sf* evaluate_expr_sf(char name, char *expr, bst_sf *root) {
 }
 
 matrix_sf *execute_script_sf(char *filename) {
-   return NULL;
+    return NULL;
 }
 
 // This is a utility function used during testing. Feel free to adapt the code to implement some of
