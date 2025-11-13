@@ -1,7 +1,38 @@
 #include "hw7.h"
 
 bst_sf* insert_bst_sf(matrix_sf *mat, bst_sf *root) {
-    return NULL;
+    if (root == NULL) {
+        bst_sf *node = malloc(sizeof(bst_sf));
+        node->mat = mat;
+        node->left_child = NULL;
+        node->right_child = NULL;
+        return node;
+    }
+    bst_sf *current = root;
+    while (1) {
+        if (mat->name < current->mat->name) {
+            if (current->left_child == NULL) {
+                bst_sf *node = malloc(sizeof(bst_sf));
+                node->mat = mat;
+                node->left_child = NULL;
+                node->right_child = NULL;
+                current->left_child = node;
+                break;
+            }
+            current = current->left_child;
+        } else if (mat->name > current->nat->name) {
+            if (current->right_child == NULL) {
+                bst_sf *node = malloc(sizeof(bst_sf));
+                node->mat = mat;
+                node->left_child = NULL;
+                node->right_child = NULL;
+                current->right_child = node;
+                break;
+            }
+            current = current->right_child;
+        }
+    }
+    return root;
 }
 
 matrix_sf* find_bst_sf(char name, bst_sf *root) {
