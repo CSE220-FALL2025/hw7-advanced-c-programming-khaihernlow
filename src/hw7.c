@@ -244,7 +244,50 @@ matrix_sf* evaluate_expr_sf(char name, char *expr, bst_sf *root) {
 }
 
 matrix_sf *execute_script_sf(char *filename) {
-    return NULL;
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        return NULL;
+    }
+
+    bst_sf *root = NULL;
+    char *str = NULL;
+    size_t max_line_size = MAX_LINE_LEN;
+    char last_line_name = 0;
+    while (getline(&str, &max_line_size, file) != -1) {
+        int str_count = 0;
+        while (isspace(str[str_count])) { str_count++; }
+        if (str[str_count] == '\0') {
+            continue;
+        }
+
+        char name = 0;
+        if (isalpha(str[str_count]) && isupper(str[str_count])) {
+            name = str[str_count];
+            last_line_name = name;
+        }
+
+        str_count++;
+        while (isspace(str[str_count])) { str_count++; }
+        str_count++;
+        
+        matrix_sf *mat = NULL;
+        if (strchr(&str[str_count], '[') != NULL) {
+            mat = create_matrix_sf(name, &str[str_count]);
+        } else {
+            mat = evaluate_expr_sf(name, &str[str_count], root);
+        }
+        root = insert_bst_sf(mat, root);
+    }
+    free(str);
+    fclose(file);
+    matrix_sf *mat_final = find_bst_sf(last_line_name, root);
+    matrix_sf *mat_final_copy = NULL;
+    if (mat_final != NULL) {
+        mat_final_copy = copy_matrix(mat_final->num_rows, mat_final->num_cols, mat_final->values);
+        mat_final_copy->name = mat_final->name;
+    }
+    free_bst_sf(root);
+    return mat_final_copy;
 }
 
 // This is a utility function used during testing. Feel free to adapt the code to implement some of
