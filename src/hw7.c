@@ -150,7 +150,47 @@ matrix_sf* create_matrix_sf(char name, const char *expr) {
 }
 
 char* infix2postfix_sf(char *infix) {
-    return NULL;
+    char *p = infix;
+    char *output = malloc(strlen(infix) + 1);
+    char *stack = malloc(strlen(infix));
+    int stack_top = -1;
+    int output_count = -1;
+
+    while (*p != '\0') {
+        while (isspace(*p)) { p++; }
+        if (*p == '\0') {
+            break;
+        }
+        if (isalpha(*p)) {
+            output[++output_count] = *p;
+        } else if (*p == '(') {
+            stack[++stack_top] = *p;
+        } else if (*p == ')') {
+            while (stack_top >= 0 && stack[stack_top] != '(') {
+                output[++output_count] = stack[stack_top--];
+            }
+            stack_top--;
+        } else if (*p == '+') {
+            while (stack_top >= 0 && stack[stack_top] != '(' && (stack[stack_top] == '+' || stack[stack_top] == '*')) {
+                output[++output_count] = stack[stack_top--];
+            }
+            stack[++stack_top] = '+';
+        } else if (*p == '*') {
+            while (stack_top >= 0 && stack[stack_top] != '(' && stack[stack_top] == '*') {
+                output[++output_count] = stack[stack_top--];
+            }
+            stack[++stack_top] = '*';
+        } else if (*p == '\'') {
+            output[++output_count] = *p;
+        }
+        p++;
+    }
+    while (stack_top >= 0) {
+        output[++output_count] = stack[stack_top--];
+    }
+    output[output_count + 1] = '\0';
+    free(stack);
+    return output;
 }
 
 matrix_sf* evaluate_expr_sf(char name, char *expr, bst_sf *root) {
