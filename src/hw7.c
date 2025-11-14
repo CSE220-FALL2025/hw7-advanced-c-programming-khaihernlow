@@ -194,7 +194,53 @@ char* infix2postfix_sf(char *infix) {
 }
 
 matrix_sf* evaluate_expr_sf(char name, char *expr, bst_sf *root) {
-    return NULL;
+    char *postfix = infix2postfix_sf(expr);
+    matrix_sf **mat_stack = malloc(strlen(postfix) * sizeof(matrix_sf*));
+    int stack_top = -1;
+
+    char *p = postfix;
+    while (*p != '\0') {
+        if (isalpha(*p)) {
+            matrix_sf *mat = find_bst_sf(*p, root);
+            mat_stack[++stack_top] = mat;
+        } else if (*p == '\'') {
+            matrix_sf *mat_1 = mat_stack[stack_top--];
+            matrix_sf *mat_res = transpose_mat_sf(mat_1);
+            if (!isalpha(mat_1->name)) {
+                free(mat_1);
+            }
+            mat_stack[++stack_top] = mat_res;
+        } else if (*p == '+') {
+            matrix_sf *mat_2 = mat_stack[stack_top--];
+            matrix_sf *mat_1 = mat_stack[stack_top--];
+            matrix_sf *mat_res = add_mats_sf(mat_1, mat_2);
+            if (!isalpha(mat_1->name)) {
+                free(mat_1);
+            }
+            if (!isalpha(mat_2->name)) {
+                free(mat_2);
+            }
+            mat_stack[++stack_top] = mat_res;
+        } else if (*p == '*') {
+            matrix_sf *mat_2 = mat_stack[stack_top--];
+            matrix_sf *mat_1 = mat_stack[stack_top--];
+            matrix_sf *mat_res = mult_mats_sf(mat_1, mat_2);
+            if (!isalpha(mat_1->name)) {
+                free(mat_1);
+            }
+            if (!isalpha(mat_2->name)) {
+                free(mat_2);
+            }
+            mat_stack[++stack_top] = mat_res;
+        }
+        p++;
+    }
+    matrix_sf *mat_final = mat_stack[stack_top];
+    mat_final->name = name;
+
+    free(postfix);
+    free(mat_stack);
+    return mat_final;
 }
 
 matrix_sf *execute_script_sf(char *filename) {
