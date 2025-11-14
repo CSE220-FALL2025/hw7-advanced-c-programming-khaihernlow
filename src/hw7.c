@@ -36,6 +36,18 @@ bst_sf* insert_bst_sf(matrix_sf *mat, bst_sf *root) {
 }
 
 matrix_sf* find_bst_sf(char name, bst_sf *root) {
+    bst_sf *current = root;
+    while (1) {
+        if (current == NULL) {
+            break;
+        } else if (current->mat->name == name) {
+            return current->mat;
+        } else if (name < current->mat->name) {
+            current = current->left_child;
+        } else if (name > current->mat->name) {
+            current = current->right_child;
+        }
+    }
     return NULL;
 }
 
