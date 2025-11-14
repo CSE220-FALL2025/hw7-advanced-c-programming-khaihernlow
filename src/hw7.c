@@ -20,7 +20,7 @@ bst_sf* insert_bst_sf(matrix_sf *mat, bst_sf *root) {
                 break;
             }
             current = current->left_child;
-        } else if (mat->name > current->nat->name) {
+        } else if (mat->name > current->mat->name) {
             if (current->right_child == NULL) {
                 bst_sf *node = malloc(sizeof(bst_sf));
                 node->mat = mat;
@@ -84,7 +84,7 @@ matrix_sf* mult_mats_sf(const matrix_sf *mat1, const matrix_sf *mat2) {
     for (int i = 0; i < mat1->num_rows; i++) {
         for (int j = 0; j < mat2->num_cols; j++) {
             int sum = 0;
-            for (int k = 0; k < mat1->num_cols) {
+            for (int k = 0; k < mat1->num_cols; k++) {
                 sum += mat1->values[i * mat1->num_cols + k] * mat2->values[k * mat2->num_cols + j];
             }
             product->values[i * mat2->num_cols + j] = sum;
